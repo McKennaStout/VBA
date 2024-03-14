@@ -1,0 +1,25 @@
+=IF($C2<>"New Position - 409 Staffing",
+    IF($E2="",
+        IF(AND(YEAR($N2)=YEAR($L$2), MONTH($N2)=MONTH($L$2), $N2<=$L$4),
+            MAX(NETWORKDAYS($N2+1, $L$4)),
+            IF($N2>$L$4,
+                0,
+                MAX(NETWORKDAYS($L$2, $L$4))
+            )
+        ),
+        MAX(NETWORKDAYS($L$2, $E2-1))
+    ),
+    IF($E2="",
+        IF(AND(YEAR($N2)=YEAR($L$2), MONTH($N2)=MONTH($L$2), $N2<=$L$4),
+            MAX(NETWORKDAYS($N2+1, $L$4))+1,
+            IF($N2>$L$4,
+                0,
+                MAX(NETWORKDAYS($L$2, $L$4))+1
+            )
+        ),
+        IF(AND(YEAR($N2)=YEAR($L$2), MONTH($N2)=MONTH($L$2), $N2<=$L$4),
+            MAX(NETWORKDAYS($N2+1, $L$4))+1,
+            MAX(NETWORKDAYS($N2, $L$4))+1
+        )
+    )
+)

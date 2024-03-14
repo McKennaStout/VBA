@@ -1,0 +1,9 @@
+Sub RefreshPivotTablesOnSave()
+'
+' RefreshPivotTablesOnSave Macro
+'
+' Keyboard Shortcut: Ctrl+Shift+S
+'
+    ActiveWorkbook.Save
+    ActiveWorkbook.RefreshAll
+End Sub

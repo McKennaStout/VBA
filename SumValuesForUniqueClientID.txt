@@ -1,0 +1,53 @@
+Sub SumValuesForUniqueClientID()
+    Dim ws As Worksheet
+    Dim dict As Object
+    Dim employeeID As Variant
+    Dim sumValue As Double
+    Dim i As Long, lastRow As Long
+    Dim wb As Workbook
+    
+    ' Set the workbook object to the specific workbook by name
+    Set wb = Workbooks("FY23 - MedLogHighestExpenditures.xlsx")
+    
+    ' Set the worksheet object to the sheet named "Sheet1" in the specified workbook
+    Set ws = wb.Worksheets("Sheet1")
+    
+    ' Create a dictionary to store unique employee IDs and their sum
+    Set dict = CreateObject("Scripting.Dictionary")
+    
+    ' Find the last row in column B with data
+    lastRow = ws.Cells(ws.Rows.Count, "B").End(xlUp).Row
+    
+    ' Loop through each row in column B
+    For i = 1 To lastRow
+        ' Get the employee ID from column B
+        employeeID = ws.Cells(i, "B").Value
+        
+        ' Check if the value in column V is numeric before attempting to sum
+        If IsNumeric(ws.Cells(i, "V").Value) Then
+            sumValue = ws.Cells(i, "V").Value
+        Else
+            sumValue = 0
+        End If
+        
+        ' Add or sum the values in the dictionary for each unique employee ID
+        If dict.Exists(employeeID) Then
+            dict(employeeID) = dict(employeeID) + sumValue
+        Else
+            dict.Add employeeID, sumValue
+        End If
+    Next i
+    
+    ' Loop through the dictionary and place the sums in column Y of the first occurrence of each unique employee ID
+    For Each employeeID In dict.Keys
+        ws.Cells(ws.Range("B:B").Find(employeeID).Row, "Y").Value = dict(employeeID)
+    Next employeeID
+    
+    ' Cleanup
+    Set dict = Nothing
+    Set ws = Nothing
+    Set wb = Nothing
+    
+    MsgBox "Process Completed Successfully", vbInformation
+End Sub
+

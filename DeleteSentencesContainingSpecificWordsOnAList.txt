@@ -1,0 +1,47 @@
+Sub DeleteSentencesContainingSpecificWordsOnAList()
+  Dim objListDoc As Document, objTargetDoc As Document
+  Dim objParaRange As Range
+  Dim objParagraph As Paragraph
+  Dim strFileName As String, strButtonValue As String
+  Dim dlgFile As FileDialog
+ 
+  Set dlgFile = Application.FileDialog(msoFileDialogFilePicker)
+ 
+  With dlgFile
+    If .Show = -1 Then
+      strFileName = .SelectedItems(1)
+    Else
+      MsgBox "No file is selected! Please select the target file."
+      Exit Sub
+    End If
+  End With
+  Set objTargetDoc = ActiveDocument
+  Set objListDoc = Documents.Open(strFileName)
+  objTargetDoc.Activate
+ 
+  For Each objParagraph In objListDoc.Paragraphs
+    Set objParaRange = objParagraph.Range
+    objParaRange.End = objParaRange.End - 1
+ 
+    With Selection
+      .HomeKey Unit:=wdStory
+ 
+      '  Find target words.
+      With Selection.Find
+        .ClearFormatting
+        .Text = objParaRange
+        .MatchWholeWord = True
+        .MatchCase = False
+        .Execute
+      End With
+ 
+      '  Expand the selection to the entire sentence.
+      Do While .Find.Found
+        Selection.Expand Unit:=wdSentence
+          Selection.Delete
+        .Collapse wdCollapseEnd
+        .Find.Execute
+      Loop
+    End With
+  Next objParagraph
+End Sub

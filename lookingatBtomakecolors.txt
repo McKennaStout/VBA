@@ -1,0 +1,47 @@
+Sub ColorUniqueIDs()
+    Dim rng As Range
+    Dim cell As Range
+    Dim dict As Object
+    Dim colorArray As Variant
+    Dim colorIndex As Integer
+    
+    ' Set the range where the IDs are located in Sheet1
+    Set rng = ThisWorkbook.Worksheets("Sheet1").Range("B2:B1546")
+    
+    ' Create a dictionary to store unique IDs and their associated colors
+    Set dict = CreateObject("Scripting.Dictionary")
+    
+    ' Define an array of light pastel color indices
+    colorArray = Array(34, 35, 36, 37, 38, 39, 40, 41)
+    
+    ' Initialize a variable to keep track of the position in the color array
+    colorIndex = 0
+    
+    ' Loop through each cell in the range
+    For Each cell In rng
+        ' Check if the ID is already in the dictionary
+        If dict.Exists(cell.Value) Then
+            ' Apply the color associated with this ID from the dictionary
+            cell.Interior.colorIndex = dict(cell.Value)
+        Else
+            ' Add the ID to the dictionary and associate it with a color
+            dict.Add cell.Value, colorArray(colorIndex)
+            ' Apply the color to the cell
+            cell.Interior.colorIndex = colorArray(colorIndex)
+            
+            ' Move to the next color in the array
+            colorIndex = colorIndex + 1
+            
+            ' Check if we've reached the end of the color array
+            ' If we have, reset back to the first color in the array
+            If colorIndex >= UBound(colorArray) + 1 Then
+                colorIndex = 0
+            End If
+        End If
+    Next cell
+    
+    ' Clean up
+    Set dict = Nothing
+    Set rng = Nothing
+End Sub
+
